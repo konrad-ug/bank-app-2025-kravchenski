@@ -8,3 +8,15 @@ class TestAccount:
         assert account.last_name == "Doe"
         assert account.balance == 0.0
         assert account.pesel == "12345678901"
+
+    def test_pesel_too_short(self):
+        account = Account("John", "Doe", "12345")
+        assert account.pesel == "Invalid"
+
+    def test_pesel_too_long(self):
+        account = Account("John", "Doe", "2342342341532525235235")
+        assert account.pesel == "Invalid"
+
+    def test_pesel_no_digit(self):
+        account = Account("John", "Doe", None)
+        assert account.pesel == "Invalid"
