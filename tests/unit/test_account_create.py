@@ -52,3 +52,57 @@ class TestAccount:
         result3 = account.apply_promo_code("WRONG_CODE")
         assert result3 == False
         assert account.balance == 100.0
+
+    def test_apply_age_bonus_after_1960(self):
+        account = Account("John", "Doe", "02222912345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == True
+        assert account.balance == initial_balance + 50.0
+
+    def test_apply_age_bonus_in_1961(self):
+        account = Account("Jane", "Doe", "61010112345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == True
+        assert account.balance == initial_balance + 50.0
+
+    def test_apply_age_bonus_before_1960(self):
+        account = Account("Bob", "Smith", "59123112345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == False
+        assert account.balance == initial_balance
+
+    def test_apply_age_bonus_invalid_pesel(self):
+        account = Account("Alice", "Brown", "INVALID_PESEL")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == False
+        assert account.balance == initial_balance
+
+    def test_apply_age_bonus_old_century(self):
+        account = Account("Eve", "White", "81923112345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == False
+        assert account.balance == initial_balance
+
+    def test_apply_age_bonus_after_2000(self):
+        account = Account("Jane", "Doe", "05223912345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == True
+        assert account.balance == initial_balance + 50.0

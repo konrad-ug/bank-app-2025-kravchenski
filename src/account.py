@@ -20,6 +20,33 @@ class Account:
 
         return False
 
+    def extract_birth_year(self):
+        try:
+            year_part = int(self.pesel[0:2])
+            month_part = int(self.pesel[2:4])
+            if 1 <= month_part <= 12:
+                century = 1900
+            elif 21 <= month_part <= 32:
+                century = 2000
+            elif 41 <= month_part <= 52:
+                century = 2100
+            elif 61 <= month_part <= 72:
+                century = 2200
+            elif 81 <= month_part <= 92:
+                century = 1800
+            else:
+                return None
+            return century + year_part
+        except (ValueError, TypeError):
+            return None
+
+    def apply_age_bonus(self):
+        year = self.extract_birth_year()
+        if year is not None and year > 1960:
+            self.balance += 50.0
+            return True
+        return False
+
     def apply_promo_code(self, promo_code):
         if self.is_promocode_valid(promo_code):
             self.balance += 50.0
