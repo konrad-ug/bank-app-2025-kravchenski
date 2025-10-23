@@ -52,3 +52,15 @@ class Account:
             self.balance += 50.0
             return True
         return False
+
+    def receive_transfer(self, amount):
+        if isinstance(amount, (int, float)) and amount > 0:
+            self.balance += float(amount)
+            return True
+        return False
+
+    def send_transfer(self, amount):
+        if isinstance(amount, (int, float)) and 0 < amount <= self.balance:
+            self.balance -= float(amount)
+            return True
+        return False
