@@ -11,6 +11,8 @@ class CompanyAccount(Account):
         if isinstance(nip, str) and nip.isdigit() and len(nip) == 10:
             return True
         return False
-    
     def get_express_fee(self):
         return 5.0
+    
+    def submit_for_loan(self, amount):
+        return False
