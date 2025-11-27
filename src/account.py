@@ -5,6 +5,7 @@ class Account:
         self.balance = 0.0
         self.promo_code = promo_code
         self.pesel = pesel if self.is_pesel_valid(pesel) else "Invalid"
+        self.history = []
         self.apply_promo_code(promo_code)
 
     def is_pesel_valid(self, pesel):
@@ -52,15 +53,18 @@ class Account:
             self.balance += 50.0
             return True
         return False
-
+    
     def receive_transfer(self, amount):
         if isinstance(amount, (int, float)) and amount > 0:
             self.balance += float(amount)
+            self.history.append(float(amount))
             return True
         return False
+
     def send_transfer(self, amount):
         if isinstance(amount, (int, float)) and 0 < amount <= self.balance:
             self.balance -= float(amount)
+            self.history.append(-float(amount))
             return True
         return False
     
@@ -73,5 +77,7 @@ class Account:
             total_cost = float(amount) + express_fee
             if self.balance >= amount - express_fee:
                 self.balance -= total_cost
+                self.history.append(-float(amount))
+                self.history.append(-express_fee)
                 return True
         return False
