@@ -81,3 +81,22 @@ class Account:
                 self.history.append(-express_fee)
                 return True
         return False
+    def submit_for_loan(self, amount):
+        if not isinstance(amount, (int, float)) or amount <= 0:
+            return False
+        
+        if len(self.history) < 3:
+            return False
+        
+        last_three = self.history[-3:]
+        if all(transaction > 0 for transaction in last_three):
+            self.balance += float(amount)
+            return True
+        if len(self.history) >= 5:
+            last_five = self.history[-5:]
+            sum_last_five = sum(last_five)
+            if sum_last_five > amount:
+                self.balance += float(amount)
+                return True
+        
+        return False
