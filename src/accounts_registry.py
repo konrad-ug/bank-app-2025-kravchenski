@@ -11,10 +11,8 @@ class AccountsRegistry:
                 return acc
         return None
 
-    @property
-    def accounts(self):
+    def get_all_accounts(self):
         return self._accounts.copy()
 
-    @property
     def count(self):
         return len(self._accounts)
