@@ -36,6 +36,13 @@ jobs:
     - name: Test with coverage
       run: |
         python3 -m coverage run --source=src -m pytest
+    - name: Start Flask API (background)
+      run: |
+        python -m flask --app src/api.py --debug run &
+        sleep 3
+    - name: Test API
+      run: |
+        python -m pytest tests/api/
     - name: Check code coverage
       run: |
         python3 -m coverage report
