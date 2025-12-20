@@ -1,3 +1,6 @@
+from datetime import datetime
+from smtp.smtp import SMTPClient
+
 class Account:
     def __init__(self, first_name, last_name, pesel, promo_code=None):
         self.first_name = first_name
@@ -81,6 +84,7 @@ class Account:
                 self.history.append(-express_fee)
                 return True
         return False
+
     def submit_for_loan(self, amount):
         if not isinstance(amount, (int, float)) or amount <= 0:
             return False
@@ -100,3 +104,11 @@ class Account:
                 return True
         
         return False
+
+    def send_history_via_email(self, email_address):
+        today = datetime.now().strftime("%Y-%m-%d")
+        subject = f"Account Transfer History {today}"
+        text = f"Personal account history: {self.history}"
+        
+        smtp_client = SMTPClient()
+        return smtp_client.send(subject, text, email_address)
