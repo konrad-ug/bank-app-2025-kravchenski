@@ -65,5 +65,18 @@ def delete_account(pesel):
     registry._accounts.remove(acc)
     return jsonify({"message": "Account deleted"}), 200
 
+@app.route("/api/accounts/<pesel>/transfer", methods=['POST'])
+def receive_transfer(pesel):
+    acc = registry.find_by_pesel(pesel)
+    if not acc:
+        abort(404)
+    data = request.get_json()
+    if not data or "amount" not in data:
+        return jsonify({"error": "Missing amount"}), 400
+    amount = data["amount"]
+    if acc.receive_transfer(amount):
+        return jsonify({"message": "Transfer received", "balance": acc.balance}), 200
+    return jsonify({"error": "Invalid transfer"}), 400
+
 if __name__ == "__main__":
     app.run(debug=True)
