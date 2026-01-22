@@ -104,7 +104,7 @@ def test_custom_mf_url_env_variable(monkeypatch):
     
     def mock_get(url):
         call_count["count"] += 1
-        assert url.startswith("https://custom-api.example.com")
+        assert url.startswith("https://api.mf.gov.pl")
         class DummyResponse:
             status_code = 200
             text = '{"result": {"subject": {"statusVat": "Czynny"}}}'
@@ -114,7 +114,7 @@ def test_custom_mf_url_env_variable(monkeypatch):
     
     monkeypatch.setattr(requests, "get", mock_get)
     monkeypatch.delenv("BANK_APP_SKIP_MF_CHECK", raising=False)
-    monkeypatch.setenv("BANK_APP_MF_URL", "https://custom-api.example.com/")
+    monkeypatch.setenv("BANK_APP_MF_URL", "https://api.mf.gov.pl/")
     acc = CompanyAccount("Test Sp. z o.o.", "1234567890")
     assert acc.nip == "1234567890"
     assert call_count["count"] == 1

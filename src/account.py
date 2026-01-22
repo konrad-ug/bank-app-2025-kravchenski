@@ -112,3 +112,32 @@ class Account:
         
         smtp_client = SMTPClient()
         return smtp_client.send(subject, text, email_address)
+
+    def to_dict(self):
+        return {
+            "name": self.first_name,
+            "surname": self.last_name,
+            "pesel": self.pesel,
+            "balance": self.balance,
+            "history": self.history,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        if data is None:
+            raise ValueError("Account data cannot be None")
+        first_name = data.get("name") or data.get("first_name") or ""
+        last_name = data.get("surname") or data.get("last_name") or ""
+        pesel = data.get("pesel")
+        account = cls(first_name, last_name, pesel)
+        balance = data.get("balance", 0.0)
+        history = data.get("history", [])
+        try:
+            account.balance = float(balance)
+        except (TypeError, ValueError):
+            account.balance = 0.0
+        if history is None:
+            account.history = []
+        else:
+            account.history = [float(item) for item in history]
+        return account
