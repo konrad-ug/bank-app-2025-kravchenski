@@ -20,7 +20,7 @@ class TestPersonalAccountEmailHistory:
         with patch('src.account.SMTPClient', return_value=mock_smtp):
             with patch('src.account.datetime') as mock_datetime:
                 mock_datetime.now.return_value.strftime.return_value = "2025-12-10"
-                result = account.send_history_via_email("test@example.com")
+                result = account.send_history_via_email("test@gmail.com")
         
         mock_smtp.send.assert_called_once()
         
@@ -31,7 +31,7 @@ class TestPersonalAccountEmailHistory:
         
         assert subject == "Account Transfer History 2025-12-10"
         assert text == "Personal account history: [100.0, -1.0, 500.0]"
-        assert email == "test@example.com"
+        assert email == "test@gmail.com"
         assert result == True
     
     def test_send_email_returns_true_on_success(self, monkeypatch):
@@ -42,7 +42,7 @@ class TestPersonalAccountEmailHistory:
         mock_smtp.send = Mock(return_value=True)
         
         with patch('src.account.SMTPClient', return_value=mock_smtp):
-            result = account.send_history_via_email("success@example.com")
+            result = account.send_history_via_email("success@yahoo.com")
         
         assert result == True
         mock_smtp.send.assert_called_once()
@@ -55,7 +55,7 @@ class TestPersonalAccountEmailHistory:
         mock_smtp.send = Mock(return_value=False)
         
         with patch('src.account.SMTPClient', return_value=mock_smtp):
-            result = account.send_history_via_email("failure@example.com")
+            result = account.send_history_via_email("failure@outlook.com")
         
         assert result == False
         mock_smtp.send.assert_called_once()
@@ -69,7 +69,7 @@ class TestPersonalAccountEmailHistory:
             with patch('src.account.datetime') as mock_datetime:
                 mock_datetime.now.return_value.strftime.return_value = "2025-12-10"
                 
-                result = account.send_history_via_email("empty@example.com")
+                result = account.send_history_via_email("empty@proton.me")
         
         call_args = mock_smtp.send.call_args
         text = call_args[0][1]
@@ -88,7 +88,7 @@ class TestPersonalAccountEmailHistory:
         mock_smtp.send = Mock(return_value=True)
         
         with patch('src.account.SMTPClient', return_value=mock_smtp):
-            result = account.send_history_via_email("complex@example.com")
+            result = account.send_history_via_email("complex@mail.com")
         
         call_args = mock_smtp.send.call_args
         text = call_args[0][1]
@@ -118,7 +118,7 @@ class TestCompanyAccountEmailHistory:
             with patch('src.company_account.datetime') as mock_datetime:
                 mock_datetime.now.return_value.strftime.return_value = "2025-12-10"
                 
-                result = account.send_history_via_email("company@example.com")
+                result = account.send_history_via_email("company@google.com")
         
         mock_smtp.send.assert_called_once()
         
@@ -129,7 +129,7 @@ class TestCompanyAccountEmailHistory:
         
         assert subject == "Account Transfer History 2025-12-10"
         assert text == "Company account history: [5000.0, -1000.0, 500.0]"
-        assert email == "company@example.com"
+        assert email == "company@google.com"
         assert result == True
     
     def test_company_send_email_returns_true_on_success(self, monkeypatch):

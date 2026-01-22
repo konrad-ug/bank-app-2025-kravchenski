@@ -26,6 +26,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Start Mongo
+      run: |
+        docker compose -f mongo.yml up -d
+        sleep 5
     
     - name: Start Flask
       run: |

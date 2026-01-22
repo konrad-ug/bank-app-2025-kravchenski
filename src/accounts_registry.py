@@ -16,3 +16,9 @@ class AccountsRegistry:
 
     def count(self):
         return len(self._accounts)
+
+    def clear(self):
+        self._accounts.clear()
+
+    def remove_account(self, account):
+        self._accounts.remove(account)

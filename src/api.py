@@ -1,9 +1,20 @@
 from flask import Flask, request, jsonify, abort
 from src.accounts_registry import AccountsRegistry
 from src.account import Account
+from src.mongo_accounts_repository import MongoAccountsRepository
 
 app = Flask(__name__)
 registry = AccountsRegistry()
+repository = MongoAccountsRepository()
+
+
+def _serialize_account(acc):
+    return {
+        "name": acc.first_name,
+        "surname": acc.last_name,
+        "pesel": acc.pesel,
+        "balance": acc.balance,
+    }
 
 @app.route("/api/accounts", methods=['POST'])
 def create_account():
@@ -19,12 +30,7 @@ def create_account():
 @app.route("/api/accounts", methods=['GET'])
 def get_all_accounts():
     accounts = registry.get_all_accounts()
-    accounts_data = [{
-        "name": acc.first_name,
-        "surname": acc.last_name,
-        "pesel": acc.pesel,
-        "balance": acc.balance
-    } for acc in accounts]
+    accounts_data = [_serialize_account(acc) for acc in accounts]
     return jsonify(accounts_data), 200
 
 @app.route("/api/accounts/count", methods=['GET'])
@@ -36,12 +42,7 @@ def get_account_by_pesel(pesel):
     acc = registry.find_by_pesel(pesel)
     if not acc:
         abort(404)
-    return jsonify({
-        "name": acc.first_name,
-        "surname": acc.last_name,
-        "pesel": acc.pesel,
-        "balance": acc.balance
-    }), 200
+    return jsonify(_serialize_account(acc)), 200
 
 @app.route("/api/accounts/<pesel>", methods=['PATCH'])
 def update_account(pesel):
@@ -62,7 +63,7 @@ def delete_account(pesel):
     acc = registry.find_by_pesel(pesel)
     if not acc:
         abort(404)
-    registry._accounts.remove(acc)
+    registry.remove_account(acc)
     return jsonify({"message": "Account deleted"}), 200
 
 @app.route("/api/accounts/<pesel>/transfer", methods=['POST'])
@@ -77,6 +78,22 @@ def receive_transfer(pesel):
     if acc.receive_transfer(amount):
         return jsonify({"message": "Transfer received", "balance": acc.balance}), 200
     return jsonify({"error": "Invalid transfer"}), 400
+
+
+@app.route("/api/accounts/save", methods=['POST'])
+def save_accounts_to_db():
+    accounts = registry.get_all_accounts()
+    repository.save_all(accounts)
+    return jsonify({"message": "Accounts saved", "saved": len(accounts)}), 200
+
+
+@app.route("/api/accounts/load", methods=['POST'])
+def load_accounts_from_db():
+    accounts = repository.load_all()
+    registry.clear()
+    for acc in accounts:
+        registry.add_account(acc)
+    return jsonify({"message": "Accounts loaded", "loaded": len(accounts)}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
