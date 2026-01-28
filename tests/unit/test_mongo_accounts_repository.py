@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock, patch
 
 from src.account import Account
 from src.mongo_accounts_repository import MongoAccountsRepository
@@ -49,3 +49,41 @@ def test_load_all_returns_accounts_from_collection():
     assert accounts[1].pesel == account2.pesel
     assert accounts[1].balance == account2.balance
     assert accounts[1].history == account2.history
+
+
+@patch("src.mongo_accounts_repository.MongoClient")
+def test_init_without_collection_uses_env_or_defaults(mock_mongo_client):
+    mock_client = MagicMock()
+    mock_db = MagicMock()
+    mock_collection = MagicMock()
+    mock_client.__getitem__.return_value = mock_db
+    mock_db.__getitem__.return_value = mock_collection
+    mock_mongo_client.return_value = mock_client
+
+    repo = MongoAccountsRepository()
+
+    mock_mongo_client.assert_called_once_with("mongodb://localhost:27017")
+    mock_client.__getitem__.assert_called_once_with("bank_app")
+    mock_db.__getitem__.assert_called_once_with("accounts")
+    assert repo._collection == mock_collection
+
+
+@patch("src.mongo_accounts_repository.MongoClient")
+def test_init_with_custom_uri_db_collection(mock_mongo_client):
+    mock_client = MagicMock()
+    mock_db = MagicMock()
+    mock_collection = MagicMock()
+    mock_client.__getitem__.return_value = mock_db
+    mock_db.__getitem__.return_value = mock_collection
+    mock_mongo_client.return_value = mock_client
+
+    repo = MongoAccountsRepository(
+        uri="mongodb://custom:27018",
+        db_name="custom_db",
+        collection_name="custom_collection"
+    )
+
+    mock_mongo_client.assert_called_once_with("mongodb://custom:27018")
+    mock_client.__getitem__.assert_called_once_with("custom_db")
+    mock_db.__getitem__.assert_called_once_with("custom_collection")
+    assert repo._collection == mock_collection

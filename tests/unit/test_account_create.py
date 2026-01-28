@@ -106,3 +106,21 @@ class TestAccount:
 
         assert result == True
         assert account.balance == initial_balance + 50.0
+
+    def test_apply_age_bonus_21st_century(self):
+        account = Account("Future", "Person", "05413912345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == True
+        assert account.balance == initial_balance + 50.0
+
+    def test_apply_age_bonus_22nd_century(self):
+        account = Account("Far", "Future", "05613912345")
+        initial_balance = account.balance
+
+        result = account.apply_age_bonus()
+
+        assert result == True
+        assert account.balance == initial_balance + 50.0
