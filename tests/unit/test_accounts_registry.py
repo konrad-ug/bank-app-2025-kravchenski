@@ -32,4 +32,19 @@ def test_get_all_accounts(registry, sample_accounts):
         registry.add_account(acc)
     all_accs = registry.get_all_accounts()
     assert all_accs == sample_accounts
-    assert all_accs is not sample_accounts  # copy, not ref
+    assert all_accs is not sample_accounts
+
+def test_clear_accounts(registry, sample_accounts):
+    for acc in sample_accounts:
+        registry.add_account(acc)
+    assert registry.count() == 3
+    registry.clear()
+    assert registry.count() == 0
+
+def test_remove_account(registry, sample_accounts):
+    for acc in sample_accounts:
+        registry.add_account(acc)
+    assert registry.count() == 3
+    registry.remove_account(sample_accounts[1])
+    assert registry.count() == 2
+    assert registry.find_by_pesel("98765432109") is None
